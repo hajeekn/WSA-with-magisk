@@ -356,9 +356,6 @@ fi
 ANDROID_API=32
 update_gapps_zip_name() {
     if [ "$GAPPS_BRAND" = "OpenGApps" ]; then
-        # TODO: keep it 11.0 since official opengapps does not support 12+ yet
-        # As soon as opengapps is available for 12+, we need to get the sdk/release from build.prop and download the corresponding version
-        ANDROID_API=30
         GAPPS_ZIP_NAME="$GAPPS_BRAND-$ARCH-${ANDROID_API_MAP[$ANDROID_API]}-$GAPPS_VARIANT".zip
     else
         GAPPS_ZIP_NAME="$GAPPS_BRAND-$ARCH-${ANDROID_API_MAP[$ANDROID_API]}".zip
@@ -898,9 +895,6 @@ else
         name2="-$GAPPS_BRAND-${ANDROID_API_MAP[$ANDROID_API]}-${GAPPS_VARIANT}"
     else
         name2="-$GAPPS_BRAND-${ANDROID_API_MAP[$ANDROID_API]}"
-    fi
-    if [ "$GAPPS_BRAND" = "OpenGApps" ] && [ "$DEBUG" ]; then
-        echo ":warning: Since OpenGApps doesn't officially support Android 12.1 yet, lock the variant to pico!"
     fi
 fi
 artifact_name="WSA"

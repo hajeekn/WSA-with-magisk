@@ -39,27 +39,20 @@ abi_map = {"x64": "x86_64", "arm64": "arm64"}
 android_api_map = {"30": "11.0", "32": "12.1", "33": "13.0"}
 release = android_api_map[android_api]
 if brand == "OpenGApps":
-    # Use Android 12.1 build of OpenGApps (also supports more variants like Full)
-    if arch == "x64" and variant == "pico":
-        link = "http://peternjeim.ddns.net:8081/ipfs/QmPDiAyqUvZHo9QU7WfoEE9XMqC8ppGyUsSwKQY7chfwHX"
-    elif arch == "x64" and variant == "full":
-        link = "http://peternjeim.ddns.net:8081/ipfs/QmULfSMwWuukQR7r9KEvwD2XzsChHTvpswmNqJyEU64jwM"
-    # Use official Android 11.0 build of OpenGApps (since I didn't build all variants)
-    else:
-        try:
-            res = requests.get(f"https://api.opengapps.org/list")
-            j = json.loads(res.content)
-            link = {i["name"]: i for i in j["archs"][abi_map[arch]]
-                    ["apis"][release]["variants"]}[variant]["zip"]
-            # print(f"JSON={j}", flush=True)
-            DATE=j["archs"][abi_map[arch]]["date"]
-            print(f"DATE={DATE}", flush=True)
-        except Exception:
-            print("Failed to fetch from OpenGApps API, fallbacking to SourceForge RSS...")
-            res = requests.get(
-                f'https://sourceforge.net/projects/opengapps/rss?path=/{abi_map[arch]}&limit=100')
-            link = re.search(f'https://.*{abi_map[arch]}/.*{release}.*{variant}.*\.zip/download', res.text).group().replace(
-                '.zip/download', '.zip').replace('sourceforge.net/projects/opengapps/files', 'downloads.sourceforge.net/project/opengapps')
+    try:
+        res = requests.get(f"https://api.opengapps.org/list")
+        j = json.loads(res.content)
+        link = {i["name"]: i for i in j["archs"][abi_map[arch]]
+                ["apis"][release]["variants"]}[variant]["zip"]
+        # print(f"JSON={j}", flush=True)
+        DATE=j["archs"][abi_map[arch]]["date"]
+        print(f"DATE={DATE}", flush=True)
+    except Exception:
+        print("Failed to fetch from OpenGApps API, fallbacking to SourceForge RSS...")
+        res = requests.get(
+            f'https://sourceforge.net/projects/opengapps/rss?path=/{abi_map[arch]}&limit=100')
+        link = re.search(f'https://.*{abi_map[arch]}/.*{release}.*{variant}.*\.zip/download', res.text).group().replace(
+            '.zip/download', '.zip').replace('sourceforge.net/projects/opengapps/files', 'downloads.sourceforge.net/project/opengapps')
 elif brand == "MindTheGapps":
     res = requests.get(
         f'https://sourceforge.net/projects/wsa-mtg/rss?path=/{abi_map[arch]}&limit=100')
